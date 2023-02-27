@@ -14,3 +14,5 @@ C:/Modeler/src/utils_local/utils_local.cpp
 -IC:/Modeler/include 
 -IC:/Modeler/src/utils_local 
 -IC:/Modeler/src/ui 
+
+g++ c:/Modeler/src/*.cpp c:/Modeler/src/ui/*.cpp c:/Modeler/src/ui/menu_buttons/*.cpp c:/Modeler/src/utils_local/*.cpp -IC:/Modeler/bin/Projects -IC:/Modeler/src/utils_local -IC:/Modeler/src/ui `wx-config --cppflags --libs` -g -o Modeler

@@ -21,6 +21,7 @@ class SettingsManager {
         int* child_window_info_ptr;
 
         wxWindow* settings_dialog;
+        wxWindow* settings_menu;
         void loadSettingsDialog(const wxMouseEvent& e);
 
         void hideDialogWindow();
@@ -28,5 +29,6 @@ class SettingsManager {
 
     private:
         void menuItemClicked(const wxCommandEvent& e);
-        const wxFont& std_font = wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+        const int x_padding = 20;
+        const int y_padding = 10;
 };

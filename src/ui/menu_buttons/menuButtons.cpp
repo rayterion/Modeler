@@ -8,9 +8,11 @@
 
 MenuButtons::MenuButtons(wxWindow* root_received, Render* render_received, wxFrame* root_frame_received){
     root = root_received;
+    root->SetFont(std_font);
     root_frame = root_frame_received;
     child_window_info = -1;
     utils_local = new UtilsLocal(root_received, std_font);
+    menu_button_window = nullptr;
     project_manager = nullptr;
     settings_manager = nullptr;
     
@@ -66,6 +68,7 @@ void MenuButtons::createWindow(){
     menu_button_window = new wxWindow(root, wxID_ANY, wxPoint(10,10), wxSize(10, 10), wxBORDER_NONE);
     int window_colour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "menu_buttons_window_colour"));
     menu_button_window->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
+    menu_button_window->SetFont(std_font_children);
 
 }
 
@@ -101,23 +104,6 @@ void MenuButtons::deleteWindowButtons(){
 void MenuButtons::buttonDown(const wxMouseEvent& e){
     int sender_id = e.GetId();
 
-    /* shows/hides the child window */
-    if (child_window_info != -1){
-        if (menu_button[child_window_info]->GetId() == sender_id) {
-        // if the window is already open and button clicked already holds the open window
-        hideWindow();
-        deleteWindowButtons();
-        
-        child_window_info = -1;
-        return;
-        } else { 
-        // if the window is already open and the button clicked isn't the sender
-        hideWindow();
-        deleteWindowButtons();
-
-        }
-    }
-
     /* deletes the project manager if open */
     if (project_manager != nullptr){
         project_manager->hideDialogWindow();
@@ -130,6 +116,23 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
         settings_manager->hideDialogWindow();
         delete settings_manager;
         settings_manager = nullptr;
+    }
+
+    /* shows/hides the child window */
+    if (child_window_info != -1){
+        if (menu_button[child_window_info]->GetId() == sender_id) {
+        // if the window is already open and button clicked already holds the open window
+        hideWindow();
+        deleteWindowButtons();
+        child_window_info = -1;
+        return;
+        
+        } else { 
+        // if the window is already open and the button clicked isn't the sender
+        hideWindow();
+        deleteWindowButtons();
+
+        }
     }
        
 
@@ -185,10 +188,6 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
     }
     /* MODIFY button */
     else if (sender_id == menu_button[1]->GetId()){
-
-        int* child_win_info_ptr = &child_window_info;
-        settings_manager = new SettingsManager(root, menu_button_window, child_win_info_ptr);
-
         std::string btn_texts[] = {"undo", "redo", "cut", "copy", "paste"};
         int window_colour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "menu_buttons_window_colour"));
 
@@ -249,7 +248,7 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
             0, 
             btn_texts[i], 
             wxPoint(2, 2), 
-            wxSize(utils_local->getFontWidth(btn_texts[3])  + x_padding, utils_local->getFontHeight("A") + y_padding), // 7 is the lenght of the biggest text, every button's size is the same
+            wxSize(utils_local->getFontWidth(btn_texts[3]) + x_padding, utils_local->getFontHeight("A") + y_padding), // 7 is the lenght of the biggest text, every button's size is the same
             wxBORDER_NONE
             );
             } 

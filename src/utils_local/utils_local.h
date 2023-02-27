@@ -12,7 +12,7 @@
 
 class UtilsLocal{
     public:
-        UtilsLocal(wxWindow* root, const wxFont& font);
+        UtilsLocal(wxWindow* root, wxFont font);
         UtilsLocal();
 
         wxWindow* root;
@@ -21,7 +21,10 @@ class UtilsLocal{
         std::string findIniValue(const std::string &fileName, const std::string &section, const std::string &key);
         std::string writeIniValue(const std::string &fileName, const std::string &section, const std::string &key);
         int getFontWidth(wxString text);
+        int getFontWidth(wxString text, wxFont font, wxWindow* window);
         int getFontHeight(wxString text);
+        int getFontHeight(wxString text, wxFont font, wxWindow* window);
+        int getFontHeight(wxFont font, wxWindow* window);
 
         std::string convertDwgToModel(std::string project_path);
 

@@ -25,11 +25,6 @@ class MenuButtons {
         ProjectManager* project_manager;
         SettingsManager* settings_manager;
 
-        wxButton* menu_button[5];
-        wxButton* file_button_child[5];
-        wxButton* edit_button_child[5];
-        wxButton* window_button_child[4];
-        wxButton* help_button_child;
 
         void loadMenuButtons(wxWindow* root_received); // loads the menu buttons
 
@@ -41,10 +36,18 @@ class MenuButtons {
         /* standard font */
         const wxFont& std_font = wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
         const int x_padding_menu_buttons = 40;
+        //child buttons font
+        const wxFont& std_font_children = wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
 
         const int x_padding = 100; // vertical padding of the buttons from the menu button's child
         const int y_padding = 10; // horizontal padding of the buttons from the menu button's child
         UtilsLocal* utils_local;
+
+        wxButton* menu_button[5];
+        wxButton* file_button_child[5];
+        wxButton* edit_button_child[5];
+        wxButton* window_button_child[4];
+        wxButton* help_button_child;
 
         /* child window loader */
         void createWindow();

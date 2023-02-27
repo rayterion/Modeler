@@ -222,7 +222,7 @@ void ProjectManager::showDialogWindow(const wxMouseEvent& e){
             loadFileDialog(sender_id);
             break;
         case 4: // import
-        loadFileDialog(sender_id);
+            loadFileDialog(sender_id);
             break;
         case 5: // delete
             break;
@@ -236,6 +236,4 @@ void ProjectManager::hideDialogWindow(){
     if (file_dlg != nullptr){
         file_dlg->Show(false);
     }
-
-    utils_local->destroyWindowButtons(menu_button_window, child_window_info);
 }

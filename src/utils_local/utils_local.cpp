@@ -1,6 +1,6 @@
 #include "utils_local.h"
 
-UtilsLocal::UtilsLocal(wxWindow* root_received, const wxFont& font_received) {
+UtilsLocal::UtilsLocal(wxWindow* root_received, wxFont font_received) {
     root = root_received;
     font = font_received;
 }
@@ -56,7 +56,17 @@ std::string UtilsLocal::writeIniValue(const std::string &file_name, const std::s
 
 int UtilsLocal::getFontWidth(wxString text){
     wxClientDC dc(root);
-    dc.SetFont(font);
+    wxCoord width, height;
+    const wxFont& font_local = font;
+    dc.SetFont(font_local);
+    dc.GetTextExtent(text, &width, &height);
+    return (int)width;
+}
+
+int UtilsLocal::getFontWidth(wxString text, wxFont font_received , wxWindow* window){
+    wxClientDC dc(window);
+    const wxFont& font_local = font_received;
+    dc.SetFont(font_local);
     wxCoord width, height;
     dc.GetTextExtent(text, &width, &height);
     return (int)width;
@@ -64,9 +74,28 @@ int UtilsLocal::getFontWidth(wxString text){
 
 int UtilsLocal::getFontHeight(wxString text){
     wxClientDC dc(root);
-    dc.SetFont(font);
+    const wxFont& font_local = font;
+    dc.SetFont(font_local);
     wxCoord width, height;
     dc.GetTextExtent(text, &width, &height);
+    return (int)height;
+}
+
+int UtilsLocal::getFontHeight(wxString text, wxFont font_received, wxWindow* window){
+    wxClientDC dc(window);
+    const wxFont& font_local = font_received;
+    dc.SetFont(font_local);
+    wxCoord width, height;
+    dc.GetTextExtent(text, &width, &height);
+    return (int)height;
+}
+
+int UtilsLocal::getFontHeight(wxFont font_received, wxWindow* window){
+    wxClientDC dc(window);
+    const wxFont& font_local = font_received;
+    dc.SetFont(font_local);
+    wxCoord width, height;
+    dc.GetTextExtent("A", &width, &height);
     return (int)height;
 }
 
