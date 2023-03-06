@@ -1,0 +1,18 @@
+project path:   C:/Modeler
+project source: C:/Modeler/src/
+
+g++ C:/Modeler/src/window.cpp C:/Modeler/src/ui/menu_buttons/menuButtons.cpp C:/Modeler/src/ui/menu_buttons/projectManager.cpp C:/Modeler/src/ui/menu_buttons/settingsManager.cpp C:/Modeler/src/ui/sceneAssistent.cpp C:/Modeler/src/ui/render.cpp C:/Modeler/src/utils_local/utils_local.cpp -IC:/Modeler/bin/Projects -IC:/Modeler/include -IC:/Modeler/src/utils_local -IC:/Modeler/src/ui `wx-config --libs` -g -Wall -o modeler
+
+C:/Modeler/src/window.cpp 
+C:/Modeler/src/ui/menu_buttons/menuButtons.cpp 
+C:/Modeler/src/ui/menu_buttons/projectManager.cpp 
+C:/Modeler/src/ui/menu_buttons/settingsManager.cpp 
+C:/Modeler/src/ui/sceneAssistent.cpp 
+C:/Modeler/src/ui/render.cpp 
+C:/Modeler/src/utils_local/utils_local.cpp 
+-IC:/Modeler/bin/Projects 
+-IC:/Modeler/include 
+-IC:/Modeler/src/utils_local 
+-IC:/Modeler/src/ui 
+
+g++ c:/Modeler/src/*.cpp c:/Modeler/src/ui/*.cpp c:/Modeler/src/ui/menu_buttons/*.cpp c:/Modeler/src/utils_local/*.cpp -IC:/Modeler/bin/Projects -IC:/Modeler/src/utils_local -IC:/Modeler/src/ui `wx-config --cppflags --libs` -g -o Modeler

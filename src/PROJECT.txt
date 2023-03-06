@@ -1,0 +1,188 @@
+CAD SOFTWARE PROJECT – PLAN
+This is the plan of the project from {name of the firm}, ltd. About the CAD software.
+Main goal: making a CAD software intuitive and powerful, with an AI that builds the projects automatically by receiving input from the client.
+
+WARNING: the include header files were added to the include dir to clean up the compilation process,
+but the libs are still in msys2's directory.
+
+TO RELEASE: when it's time to release, take the dlls binaries from bin (necessary to run the .exe) and figure out how to install it in the client's system path on windows
+
+Features: 
+1.	Create and place 2d: vertices, lines, circles (specify diameter), squares/rectangles, triangles, angles.
+2.	Create and place 3d: cubes/cuboids, pyramids/tetrahedrons, spheres, cylinders, cones, torus.
+3.	vertices assistant;
+4.	lines connector assistant;
+5.	faces assistant;
+6.	2d objects creator (AI)
+7.	3d objects creator (AI)
+8.	modify: move object or group of objects in x/y/z or specify location, rotate in x/y/z or specify angle in x, y and z, scale up and down, displace, divide, spread, copy, paste, remake (specify how much to remake, direction and from where to where), TO BE DONE.
+
+Base software features:
+-Window with a GUI, Close, minimize, maximize, resize, move
+-FILE button: save(selection as new project,changes, whole project, save as->DWG, DXF...), export(as DWG, DXF...), import(from DWG, DXF...), import as(new project, new object) delete, create new project.
+-MODIFY button: 
+    move vertice or group of vertices (also move it with the connected lines),
+    rotate,
+    scale up and down, displace, divide, spread,
+    copy, paste, remake, TO BE DONE.
+-SHAPES (2d and 3d)button:
+    Create and place 2d: vertices, lines, circles (specify diameter), squares/rectangles, triangles, angles.
+    Create and place 3d: cubes/cuboids, pyramids/tetrahedrons, spheres, cylinders, cones, torus.
+-SETTINGS:
+    window settings: confirm before close, keep tabs, open previous project on startup, colour themes
+    project: starts with default cube,
+        vertice shape, colour, identifier,
+        background colour,
+        grid colour,
+        line colour,
+        text foreground,
+        show grid,
+        show rulers,
+        show texts,
+        show lines,
+        show vertices
+
+-BUILDER ENGINE button:
+    new build,
+    save,
+    implement to project,
+    delete,
+
+    GUI: the GUI of the software shall be built following the specified rules:
+        1. looks and modifications to the window itself as well as the tools themselfs
+        should have buttons that leads to the tabs that makes the modifications possible.
+        these buttons shall be located in the topmost part of the window. this part of the window
+        works as a 'main menu', so we can control the project and the software.
+
+        2. the Modeler is an artificial intelligence
+        that automatically builds the project based on the client's text.
+        the modeler has its own window. By default, the window is visible and located next
+        to the rendered scene.
+
+        3. the wizard menu is the source of all tools
+        used to develop the project. all the tools for creation
+        and modification of vertices and lines are there. it's a window located
+        under the 'main menu' portion and on the renderer.
+
+        4. the renderer should be made so that the client can navigate easily
+        trough the project and know when it's moved. it's a window in the middle of the software
+        and fills the whole unfilled portion of the window.
+
+        
+    (1.) main menu buttons:
+        -FILE: 
+            create new project (empty or default).
+            save(selection as new project,changes, whole project, save as->DWG, DXF...),
+            export(as DWG, DXF...), 
+            import(from DWG, DXF...), 
+            import as(new project, new object),
+        -MODIFY:
+            undo/redo
+            (selected) -> cut, copy, paste, 
+
+            draw:
+                (every option in the wizard)
+
+            settings:
+                window settings: 
+                    confirm before close,
+                    colour themes
+                startup settings:
+                    keep tabs, 
+                    open previous project on startup, 
+                editor settings:
+                    vertice shape, colour, identifier,
+                    background colour,
+                    grid colour,
+                    line colour,
+                    text foreground,
+                    show grid,
+                    show rulers,
+                    show texts,
+                    show lines,
+                    show vertices
+        
+        -WINDOW:
+            colour themes (future update) {"standard", "dark", "soft blue"}
+            minimize,
+            maximize,
+            project settings:
+                confirm before close, 
+                keep tabs, 
+                keep project open,
+                auto save
+
+            editor settings:
+                future update: vertice shape colour, identifier,
+                editor colour theme {"dark", "light", "blueprint", "modern"}
+                lines size {"thin", "medium", "thick"},
+                show grid,
+                show annotations,
+                show rulers,
+
+        -HELP:
+            (sends directly to the website's manual page)
+    
+    (2.) project assistent:
+            the project assistent window is the side window in the right side of the screen by default.
+        At the top of this window, below its "title": "scene assistent", there's the project
+        management features. 
+        - these features includes: a greater "view" of the objects by making available
+        a file explorer-like environment. the client may add new objects by adding a new object to
+        the list and setting the current focused object to it so all the vertices and lines are added
+        to this list. 
+        - there must be a functionality to highlight those vertices/lines. 
+        - other "folders" can be added by the client so it gets more organized.
+
+            under it all there's the modeler section.
+            //TODO: define how the NN is gonna work
+
+    (3.) wizard menu:
+        Create: vertices,
+                lines,
+                circles (specify diameter), 
+                squares/rectangles, 
+                triangles, 
+                angles.
+        Modify:
+            Move/Copy: Allows you to move or copy a vertex or line to a new location.
+
+            Stretch: Allows you to stretch or resize a vertex or line along a specified axis.
+
+            Rotate: Allows you to rotate a vertex or line around a specified point.
+
+            Trim: Allows you to trim a line or vertex to a specified length.
+
+            Extend: Allows you to extend a line or vertex to a specified length.
+
+            Fillet: Allows you to create a rounded corner at a vertex, where two lines meet.
+
+            Chamfer: Allows you to create a angled corner at a vertex, where two lines meet.
+
+            Divide: Allows you to divide a line or vertex into a specified number of equal segments.
+
+            Mirror: Allows you to create a mirror image of a vertex or line about a specified axis.
+
+            Offset: Allows you to create a parallel line or vertex at a specified distance from the original.
+
+            Explode: Allows you to break up a complex shape into individual lines and vertices for further editing.
+
+            Join: Allows you to connect two lines or vertices together to form a single shape.
+
+            Lengthen/Shorten: Allows you to increase/decrease the length of a line or vertex.
+
+            Scale: Allows you to adjust the size of a line or vertex by a specified factor.
+
+            Break: Allows you to break a line or vertex into two separate parts.
+
+            Delete: Allows you to delete a vertex or line.
+
+            Edit: Allows you to modify the properties of a vertex or line such as color, thickness, and layer.
+
+            Align: Allows you to align one or more vertices or lines to a specified point or axis.
+
+            Snap: Allows you to snap a vertex or line to a specified point or grid for precise positioning.
+
+            3D editing: Allows you to edit vertex and lines in 3D space with features like move, rotate, and scale in 3D
+            
+
