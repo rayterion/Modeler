@@ -57,6 +57,10 @@ class MenuButtons {
         /* events */
         void buttonDown(const wxMouseEvent& e);
         void buttonUp(const wxMouseEvent& e);
+        void mouseEntered(const wxMouseEvent& e);
+        void mouseEnteredChildWindow(const wxMouseEvent& e);
+        void mouseLeave(const wxMouseEvent& e);
+        void mouseLeaveChildWindow(const wxMouseEvent& e);
 };
 
 #endif

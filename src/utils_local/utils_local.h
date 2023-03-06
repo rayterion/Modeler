@@ -19,7 +19,7 @@ class UtilsLocal{
         wxFont font;
 
         std::string findIniValue(const std::string &fileName, const std::string &section, const std::string &key);
-        std::string writeIniValue(const std::string &fileName, const std::string &section, const std::string &key);
+        void writeIniValue(const std::string &fileName, const std::string &section, const std::string &key, const std::string& new_value);
         int getFontWidth(wxString text);
         int getFontWidth(wxString text, wxFont font, wxWindow* window);
         int getFontHeight(wxString text);

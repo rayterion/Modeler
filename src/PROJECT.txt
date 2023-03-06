@@ -103,7 +103,7 @@ Base software features:
                     show vertices
         
         -WINDOW:
-            colour themes (future update)
+            colour themes (future update) {"standard", "dark", "soft blue"}
             minimize,
             maximize,
             project settings:
@@ -114,15 +114,11 @@ Base software features:
 
             editor settings:
                 future update: vertice shape colour, identifier,
-                background colour,
-                grid colour,
-                line colour,
-                text foreground,
+                editor colour theme {"dark", "light", "blueprint", "modern"}
+                lines size {"thin", "medium", "thick"},
                 show grid,
+                show annotations,
                 show rulers,
-                show texts,
-                show lines,
-                show vertices
 
         -HELP:
             (sends directly to the website's manual page)

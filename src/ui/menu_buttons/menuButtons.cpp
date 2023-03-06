@@ -60,6 +60,8 @@ void MenuButtons::loadMenuButtons(wxWindow* root_received){
         menu_button[i]->SetFont(std_font);
 
         menu_button[i]->Bind(wxEVT_LEFT_DOWN, &buttonDown, this, menu_button[i]->GetId());
+        menu_button[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEntered, this, menu_button[i]->GetId());
+        menu_button[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeave, this, menu_button[i]->GetId());
 
     }
 }
@@ -169,13 +171,10 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
             }
             file_button_child[i]->SetForegroundColour(wxColour(255, 255, 255));
             file_button_child[i]->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
+            file_button_child[i]->Bind(wxEVT_LEFT_DOWN, &ProjectManager::showDialogWindow, project_manager, file_button_child[i]->GetId());
+            file_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
+            file_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
         }
-
-        file_button_child[0]->Bind(wxEVT_LEFT_DOWN, &ProjectManager::showDialogWindow, project_manager, file_button_child[0]->GetId()); // new project buton
-        file_button_child[1]->Bind(wxEVT_LEFT_DOWN, &ProjectManager::showDialogWindow, project_manager, file_button_child[1]->GetId()); // save buton
-        file_button_child[2]->Bind(wxEVT_LEFT_DOWN, &ProjectManager::showDialogWindow, project_manager, file_button_child[2]->GetId()); // open button
-        file_button_child[3]->Bind(wxEVT_LEFT_DOWN, &ProjectManager::showDialogWindow, project_manager, file_button_child[3]->GetId()); // export buton
-        file_button_child[4]->Bind(wxEVT_LEFT_DOWN, &ProjectManager::showDialogWindow, project_manager, file_button_child[4]->GetId()); // import buton
 
         int buttons_horiz_sizes = 0;
         for (int i = 0; i < 5; i++){
@@ -215,6 +214,8 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
             
             edit_button_child[i]->SetForegroundColour(wxColour(255, 255, 255));
             edit_button_child[i]->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
+            edit_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
+            edit_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
         }
         edit_button_child[0]->Bind(wxEVT_LEFT_DOWN, &Render::undo, render, edit_button_child[0]->GetId());
         edit_button_child[1]->Bind(wxEVT_LEFT_DOWN, &Render::redo, render, edit_button_child[1]->GetId());
@@ -238,7 +239,7 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
         int* child_win_info_ptr = &child_window_info;
         settings_manager = new SettingsManager(root, menu_button_window, child_win_info_ptr);
 
-        std::string btn_texts[] = {"minimize", "maximize", "editor settings", "project settings"};
+        std::string btn_texts[] = {"minimize", "maximize", "project settings", "editor settings"};
         int window_colour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "menu_buttons_window_colour"));
 
         for (int i = 0; i < 4; i++){
@@ -265,6 +266,8 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
 
             window_button_child[i]->SetForegroundColour(wxColour(255, 255, 255));
             window_button_child[i]->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
+            window_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
+            window_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
         }
         window_button_child[0]->Bind(wxEVT_LEFT_DOWN, &MenuButtons::minimizeRoot, this);
         window_button_child[1]->Bind(wxEVT_LEFT_DOWN, &MenuButtons::maximizeRoot, this);
@@ -300,6 +303,8 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
         help_button_child->SetForegroundColour(wxColour(255, 255, 255));
         help_button_child->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
         help_button_child->Bind(wxEVT_LEFT_DOWN, &MenuButtons::redirectToManual, this, help_button_child->GetId());
+        help_button_child->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
+        help_button_child->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
 
         int buttons_horiz_sizes = help_button_child->GetSize().GetHeight();
 
@@ -308,6 +313,38 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
         showWindow(sender_id);
     }
 }
+
+void MenuButtons::mouseEntered(const wxMouseEvent& e){
+   int window_colour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "window_colour"));
+   wxButton* sender_button = dynamic_cast<wxButton*>(e.GetEventObject()); 
+    if (sender_button != nullptr){
+        sender_button->SetBackgroundColour(wxColour(window_colour + 20, window_colour + 20, window_colour + 20));
+    }
+}
+void MenuButtons::mouseEnteredChildWindow(const wxMouseEvent& e){
+    int window_colour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "menu_buttons_window_colour"));
+    wxButton* sender_button = dynamic_cast<wxButton*>(e.GetEventObject()); 
+    if (sender_button != nullptr){
+        sender_button->SetBackgroundColour(wxColour(window_colour + 20, window_colour + 20, window_colour + 20));
+    }
+}
+
+void MenuButtons::mouseLeave(const wxMouseEvent& e){
+    int window_colour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "window_colour"));
+    wxButton* sender_button = dynamic_cast<wxButton*>(e.GetEventObject());
+    if (sender_button != nullptr){
+        sender_button->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
+    }
+}
+
+void MenuButtons::mouseLeaveChildWindow(const wxMouseEvent& e){
+    int window_colour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "menu_buttons_window_colour"));
+    wxButton* sender_button = dynamic_cast<wxButton*>(e.GetEventObject());
+    if (sender_button != nullptr){
+        sender_button->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
+    }
+}
+
 void MenuButtons::redirectToManual(const wxMouseEvent& e){}
 
 void MenuButtons::maximizeRoot(const wxMouseEvent& e){ root_frame->Maximize(); }

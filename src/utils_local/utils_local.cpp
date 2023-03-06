@@ -1,5 +1,7 @@
 #include "utils_local.h"
 
+#include <filesystem>
+
 UtilsLocal::UtilsLocal(wxWindow* root_received, wxFont font_received) {
     root = root_received;
     font = font_received;
@@ -30,28 +32,72 @@ std::string UtilsLocal::findIniValue(const std::string &file_name, const std::st
     return value;
 }
 
-std::string UtilsLocal::writeIniValue(const std::string &file_name, const std::string &section, const std::string &key){
-    std::ifstream file(file_name);
-    std::ofstream out_file(file_name.substr(0, file_name.length() - 4) + ".tmp");
-    std::string line;
-    std::string value;
+void UtilsLocal::writeIniValue(const std::string &file_name, const std::string &section, const std::string &key, const std::string& new_value){
+      std::string file_path = std::filesystem::current_path().string() + "/" + file_name;
+    
+    // Open the input file.
+    std::ifstream input_file(file_path);
 
-    if(!file) {
-        std::cerr << "Error: Unable to open file: " << file_name << std::endl;
-        return "";
+    if (!input_file.is_open()) {
+        std::cerr << "Error: could not open input file " << file_name << std::endl;
+        return;
     }
 
-    while (std::getline(file, line)) {
-        // Check if the line starts with the key
-        if (line.find(key + " =") == 0) {
-            // Extract the value from the line
-            value = line.substr(line.find("=") + 1);
-            break;
+    // Create a temporary file.
+    char temp_file_path[] = "temp_file_XXXXXX.ini";
+    int temp_file_fd = mkstemp(temp_file_path);
+    FILE* temp_file = fdopen(temp_file_fd, "w");
+
+    if (!temp_file) {
+        std::cerr << "Error: could not create temporary file" << std::endl;
+        return;
+    }
+
+    // Parse the input file and write the modified data to the temporary file.
+    std::string current_section;
+    while (input_file.good()) {
+        // Read a line from the input file.
+        std::string line;
+        std::getline(input_file, line);
+
+        // Check if this line is a section header.
+        if (line[0] == '[' && line[line.length() - 1] == ']') {
+            // Write the previous section to the temporary file.
+            if (!current_section.empty()) {
+                fprintf(temp_file, "[%s]\n", current_section.c_str());
+            }
+
+            // Update the current section.
+            current_section = line.substr(1, line.length() - 2);
+        } else {
+            // Check if this line contains the key to modify.
+            size_t equals_pos = line.find('=');
+            if (equals_pos != std::string::npos) {
+                // Extract the key and value from the line.
+                std::string key_from_file = line.substr(0, equals_pos);
+
+                // Check if this is the key we want to modify.
+                if (current_section == section && key_from_file == key) {
+                    // Write the modified key/value pair to the temporary file.
+                    fprintf(temp_file, "%s=%s\n", key.c_str(), new_value.c_str());
+                } else {
+                    // Write the original key/value pair to the temporary file.
+                    fprintf(temp_file, "%s\n", line.c_str());
+                }
+            } else {
+                // Write non-key lines to the temporary file.
+                fprintf(temp_file, "%s\n", line.c_str());
+            }
         }
     }
-    if(value.empty())
-      std::cerr << "Error: Unable to find value for key: " << key << std::endl;
-    return value;
+
+    // Close the input and temporary files.
+    input_file.close();
+    fclose(temp_file);
+
+    // Rename the temporary file to the input file name.
+    remove(file_name.c_str());
+    rename(temp_file_path, file_name.c_str());
 }
 
 int UtilsLocal::getFontWidth(wxString text){
