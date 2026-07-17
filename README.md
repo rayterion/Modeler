@@ -1,8 +1,105 @@
-This project is intended to be a 3 dimensional modeling program intended for architects or 3d artists.
+# Modeler
 
-Its core features are already operational, but its an old project which was abandoned in 2023.
-If you want to revive it and make something out of it, the first thing to do is start cleaning the code (clean code and clean architecture)
-and adding simpler ways to init the software as well as adding tests as a test-driven development project.
+> A cross-platform 3D CAD modeller for architects and 3D artists, with a planned AI-assisted scene builder.
 
-In summary, if people start renewing this thing, i might come back and we can make something truly big out of it.
-making this repository public as of 06/11/2025.
+[![CI](https://github.com/rayterion/Modeler/actions/workflows/ci.yml/badge.svg)](https://github.com/rayterion/Modeler/actions/workflows/ci.yml)
+[![Docs](https://github.com/rayterion/Modeler/actions/workflows/docs.yml/badge.svg)](https://rayterion.github.io/Modeler)
+
+## Features
+
+- Custom wxWidgets-based GUI with a menu bar (FILE / MODIFY / WINDOW / HELP)
+- INI-driven user preferences (`bin/preferences.ini`)
+- Project file persistence (`.model` format)
+- DWG / DXF import pipeline (planned)
+- AI-assisted scene builder (planned)
+
+## Building
+
+### Prerequisites
+
+| Tool | Minimum version |
+|------|----------------|
+| CMake | 3.25 |
+| A C++17 compiler | GCC 11 / Clang 14 / MSVC 2022 |
+| wxWidgets | 3.2 |
+| vcpkg *(optional)* | latest |
+
+### Quick start (vcpkg)
+
+```bash
+# 1. Clone and enter the repo
+git clone https://github.com/rayterion/Modeler.git && cd Modeler
+
+# 2. Configure (vcpkg toolchain resolves wxWidgets automatically)
+cmake -B build -S . \
+  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+  -DCMAKE_BUILD_TYPE=Release
+
+# 3. Build
+cmake --build build --config Release
+```
+
+### Quick start (system wxWidgets)
+
+```bash
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+```
+
+### Running tests
+
+```bash
+cmake --build build --target all
+ctest --test-dir build --output-on-failure
+```
+
+### Building documentation
+
+```bash
+cmake --build build --target doxygen   # requires Doxygen + Graphviz
+# Output: docs/html/index.html
+```
+
+## Project structure
+
+```
+Modeler/
+├── include/modeler/        # Public C++ interfaces (no wxWidgets dependency)
+│   ├── config/             #   AppConfig — INI reader/writer
+│   ├── core/               #   IRenderer, ICommand, CommandStack
+│   └── ui/                 #   MenuPanel enum
+├── src/                    # Implementations
+│   ├── config/
+│   ├── core/
+│   └── ui/
+│       └── menu_buttons/
+├── tests/                  # GoogleTest unit + integration tests
+│   ├── mocks/
+│   └── unit/
+├── docs/                   # Doxygen configuration
+├── cmake/                  # CMake helper modules
+└── bin/                    # Runtime assets (preferences.ini, project files)
+```
+
+## Architecture overview
+
+| Layer | Location | wx dependency |
+|-------|----------|--------------|
+| Domain interfaces | `include/modeler/core/` | **None** — fully unit-testable |
+| Configuration | `include/modeler/config/` | **None** |
+| UI presentation | `src/ui/` | Yes — wxWidgets |
+
+Key interfaces:
+- **`IRenderer`** — decouples the menu/dialog layer from the concrete renderer
+- **`AppConfig`** — pure `std::filesystem` INI I/O, no GUI dependency
+- **`ICommand` / `CommandStack`** — Command pattern for undo/redo
+
+## Contributing
+
+1. Run `clang-format -i` on all changed files before committing.
+2. All new logic in `include/modeler/` must have a corresponding unit test.
+3. CI enforces `clang-format --dry-run --Werror` and `clang-tidy`.
+
+## License
+
+[TBD]

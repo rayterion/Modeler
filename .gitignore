@@ -1,0 +1,48 @@
+# Build artifacts
+build/
+cmake-build-*/
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.exp
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# vcpkg
+vcpkg_installed/
+
+# IDE / editor
+.vscode/
+.idea/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.db
+*.VC.db
+*.VC.opendb
+.vs/
+
+# Doxygen output
+docs/html/
+docs/latex/
+docs/xml/
+
+# Temp / OS
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Compiled Python (if any tooling uses it)
+__pycache__/
+*.pyc

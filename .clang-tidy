@@ -1,0 +1,35 @@
+---
+# Modeler .clang-tidy configuration
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  readability-*,
+  performance-*,
+  bugprone-*,
+  -modernize-use-trailing-return-type,
+  -readability-braces-around-statements,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-reinterpret-cast
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: '.*/(include|src)/.*\.(h|hpp)$'
+
+CheckOptions:
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: camelCase
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: '_'
+  - key: modernize-use-default-member-init.UseAssignment
+    value: '1'
+...
