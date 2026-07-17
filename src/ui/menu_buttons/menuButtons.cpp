@@ -9,7 +9,7 @@ MenuButtons::MenuButtons(wxWindow* root_received, IRenderer* render_received, wx
     root = root_received;
     root->SetFont(std_font);
     root_frame = root_frame_received;
-    child_window_info = -1;
+    child_window_info = MenuPanel::None;
     utils_local = new UtilsLocal(root_received, std_font);
     menu_button_window = nullptr;
     project_manager = nullptr;

@@ -1,0 +1,71 @@
+name: Static Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  clang-format:
+    name: clang-format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+
+      - name: Check formatting
+        run: |
+          find include src -name '*.h' -o -name '*.cpp' | \
+            xargs clang-format --dry-run --Werror --style=file
+
+  clang-tidy:
+    name: clang-tidy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            clang \
+            clang-tidy \
+            libwxgtk3.2-dev \
+            libgtk-3-dev
+
+      - name: Configure (generate compile_commands.json)
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DMODELER_BUILD_TESTS=OFF
+
+      - name: Run clang-tidy
+        run: |
+          run-clang-tidy \
+            -p build \
+            -header-filter='.*/(include|src)/.*\.(h|hpp)$' \
+            $(find src -name '*.cpp')
+
+  cppcheck:
+    name: cppcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cppcheck
+        run: sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck
+        run: |
+          cppcheck \
+            --enable=all \
+            --std=c++17 \
+            --suppress=missingIncludeSystem \
+            --error-exitcode=1 \
+            --inline-suppr \
+            -I include \
+            src
