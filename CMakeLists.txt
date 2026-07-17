@@ -1,4 +1,14 @@
 cmake_minimum_required(VERSION 3.25)
+
+# If VCPKG_ROOT is available and no explicit toolchain is provided,
+# automatically use vcpkg to resolve dependencies.
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE
+        "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "Path to the vcpkg toolchain file"
+    )
+endif()
+
 project(Modeler VERSION 0.1.0 LANGUAGES CXX)
 
 # ── Language standard ──────────────────────────────────────────────────────────
@@ -47,4 +57,15 @@ option(MODELER_BUILD_TESTS "Build unit tests" ON)
 if(MODELER_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+# ── Documentation ─────────────────────────────────────────────────────────────
+find_package(Doxygen QUIET)
+if(DOXYGEN_FOUND)
+    add_custom_target(doxygen
+        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/docs/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM
+    )
 endif()

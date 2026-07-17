@@ -1,0 +1,96 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "MODELER_BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "dev",
+      "inherits": "base",
+      "displayName": "Development (Debug, system deps)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "base",
+      "displayName": "Release (system deps)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "dev-vcpkg",
+      "inherits": "dev",
+      "displayName": "Development (Debug, vcpkg deps)",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
+    {
+      "name": "release-vcpkg",
+      "inherits": "release",
+      "displayName": "Release (vcpkg deps)",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "dev-vcpkg",
+      "configurePreset": "dev-vcpkg"
+    },
+    {
+      "name": "release-vcpkg",
+      "configurePreset": "release-vcpkg"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "dev-vcpkg",
+      "configurePreset": "dev-vcpkg",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release-vcpkg",
+      "configurePreset": "release-vcpkg",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

@@ -20,45 +20,75 @@
 | Tool | Minimum version |
 |------|----------------|
 | CMake | 3.25 |
+| Ninja | latest |
 | A C++17 compiler | GCC 11 / Clang 14 / MSVC 2022 |
 | wxWidgets | 3.2 |
 | vcpkg *(optional)* | latest |
 
-### Quick start (vcpkg)
+Ubuntu quick install for build tools:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential ninja-build
+```
+
+### Quick start
 
 ```bash
 # 1. Clone and enter the repo
 git clone https://github.com/rayterion/Modeler.git && cd Modeler
 
-# 2. Configure (vcpkg toolchain resolves wxWidgets automatically)
-cmake -B build -S . \
-  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
-  -DCMAKE_BUILD_TYPE=Release
+# 2. Configure + build (Debug, system dependencies)
+./scripts/modeler.sh build
 
-# 3. Build
-cmake --build build --config Release
+# 3. Run
+./scripts/modeler.sh run
 ```
 
-### Quick start (system wxWidgets)
+### Common developer commands
 
 ```bash
-cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
+./scripts/modeler.sh setup                # configure debug build
+./scripts/modeler.sh build                # configure + build debug
+./scripts/modeler.sh test                 # configure + build + run tests
+./scripts/modeler.sh run                  # build + run app
+./scripts/modeler.sh docs                 # generate docs/html/index.html
+./scripts/modeler.sh clean                # remove generated build dirs
 ```
 
-### Running tests
+Release builds:
 
 ```bash
-cmake --build build --target all
-ctest --test-dir build --output-on-failure
+./scripts/modeler.sh build --release
+./scripts/modeler.sh test --release
 ```
 
-### Building documentation
+Using vcpkg dependency resolution:
 
 ```bash
-cmake --build build --target doxygen   # requires Doxygen + Graphviz
-# Output: docs/html/index.html
+export VCPKG_ROOT=$HOME/vcpkg
+./scripts/modeler.sh build --vcpkg
+./scripts/modeler.sh test --vcpkg
 ```
+
+### CMake presets (without helper script)
+
+```bash
+cmake --preset dev
+cmake --build --preset dev
+ctest --preset dev
+```
+
+Available configure presets: `dev`, `release`, `dev-vcpkg`, `release-vcpkg`.
+
+### Setup error troubleshooting
+
+- `Could not find toolchain file: /scripts/buildsystems/vcpkg.cmake`
+  - `VCPKG_ROOT` was not set before running CMake.
+  - Fix: `export VCPKG_ROOT=/absolute/path/to/vcpkg` and use `--vcpkg` commands.
+- `CMAKE_MAKE_PROGRAM is not set` / `CMAKE_CXX_COMPILER not set`
+  - Required build tools are missing.
+  - Fix (Ubuntu): `sudo apt-get install -y build-essential ninja-build`
 
 ## Project structure
 
