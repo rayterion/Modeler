@@ -2,15 +2,15 @@
 
 #include <wx/filename.h>
 
-#include <iostream>
-#include <string.h>
+#include <filesystem>
 #include <fstream>
+#include <iostream>
 
 ProjectManager::ProjectManager(
-    wxWindow* root_received, 
-    wxWindow* menu_button_window_received, 
-    int* child_window_info_ptr, 
-    Render* render_received
+    wxWindow*  root_received,
+    wxWindow*  menu_button_window_received,
+    MenuPanel* child_window_info_ptr,
+    IRenderer* render_received
     ){
     render = render_received;
     menu_button_window = menu_button_window_received;
@@ -94,16 +94,15 @@ void ProjectManager::createNewProject(const wxCommandEvent& e){
 
     hideDialogWindow();
     menu_button_window->Show(false);
-    *child_window_info = -1;
-
-    std::cout << file_name << '\n'; //TEST
-    std::cout << wxStandardPaths::Get().GetDataDir().ToStdString() + "\\Projects\\" + file_name + ".model" << '\n';
+    *child_window_info = MenuPanel::None;
 
     if (file_name.length() > 1){
-        std::ofstream file;
-        file.open(wxStandardPaths::Get().GetDataDir().ToStdString() + "\\Projects\\" + file_name + ".model", std::ofstream::binary);
-        std::string project_name = file_name + ".model";
-        render->drawProjectScene(project_name); 
+        const std::filesystem::path projects_dir =
+            std::filesystem::path(wxStandardPaths::Get().GetDataDir().ToStdString()) / "Projects";
+        const std::filesystem::path file_path = projects_dir / (file_name + ".model");
+
+        std::ofstream file(file_path, std::ofstream::binary);
+        render->drawProjectScene(file_path.string());
     }
     file_name = "";
 }
@@ -111,8 +110,9 @@ void ProjectManager::createNewProject(const wxCommandEvent& e){
 void ProjectManager::cancel_btn_down(const wxMouseEvent& e){
     hideDialogWindow();
     menu_button_window->Show(false);
-    utils_local->destroyWindowButtons(menu_button_window, child_window_info);
-    }
+    utils_local->destroyWindowButtons(menu_button_window);
+    *child_window_info = MenuPanel::None;
+}
 
 /* standard load function for open, import and export buttons */
 void ProjectManager::loadFileDialog(int id){
@@ -122,7 +122,9 @@ void ProjectManager::loadFileDialog(int id){
         return;
     }
 
-    file_dlg = new wxFileDialog(root, "", wxStandardPaths::Get().GetDataDir().ToStdString() + "\\Projects\\", "", wxFileSelectorDefaultWildcardStr, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    const std::filesystem::path projects_dir =
+        std::filesystem::path(wxStandardPaths::Get().GetDataDir().ToStdString()) / "Projects";
+    file_dlg = new wxFileDialog(root, "", projects_dir.string(), "", wxFileSelectorDefaultWildcardStr, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     switch (id){
         case 2: // open 
             file_dlg->SetMessage("choose the project to open");
@@ -142,7 +144,8 @@ void ProjectManager::loadFileDialog(int id){
 
     if (file_dlg->ShowModal() == wxID_CANCEL){
         hideDialogWindow();
-        utils_local->destroyWindowButtons(menu_button_window, child_window_info);
+        utils_local->destroyWindowButtons(menu_button_window);
+        *child_window_info = MenuPanel::None;
         menu_button_window->Show(false);
         return;
     } else {

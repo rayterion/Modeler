@@ -33,8 +33,8 @@ std::string UtilsLocal::findIniValue(const std::string &file_name, const std::st
 }
 
 void UtilsLocal::writeIniValue(const std::string &file_name, const std::string &section, const std::string &key, const std::string& new_value){
-      std::string file_path = std::filesystem::current_path().string() + "/" + file_name;
-    
+    std::string file_path = std::filesystem::current_path().string() + "/" + file_name;
+
     // Open the input file.
     std::ifstream input_file(file_path);
 
@@ -43,61 +43,56 @@ void UtilsLocal::writeIniValue(const std::string &file_name, const std::string &
         return;
     }
 
-    // Create a temporary file.
-    char temp_file_path[] = "temp_file_XXXXXX.ini";
-    int temp_file_fd = mkstemp(temp_file_path);
-    FILE* temp_file = fdopen(temp_file_fd, "w");
+    // Write all lines to a sibling temp file, modifying the target key in-place.
+    const auto temp_path = std::filesystem::path(file_path).parent_path()
+                           / (std::filesystem::path(file_path).stem().string() + "_tmp.ini");
 
-    if (!temp_file) {
+    std::ofstream temp_file(temp_path);
+    if (!temp_file.is_open()) {
         std::cerr << "Error: could not create temporary file" << std::endl;
         return;
     }
 
-    // Parse the input file and write the modified data to the temporary file.
+    // Strip brackets from section parameter to match stored section names.
+    std::string section_bare = section;
+    if (!section_bare.empty() && section_bare.front() == '[' && section_bare.back() == ']')
+        section_bare = section_bare.substr(1, section_bare.size() - 2);
+
+    // Parse the input file and write modified data to the temp file.
     std::string current_section;
-    while (input_file.good()) {
-        // Read a line from the input file.
-        std::string line;
-        std::getline(input_file, line);
+    std::string line;
+    while (std::getline(input_file, line)) {
+        // Section header
+        if (!line.empty() && line.front() == '[' && line.back() == ']') {
+            current_section = line.substr(1, line.size() - 2);
+            temp_file << line << '\n';
+            continue;
+        }
 
-        // Check if this line is a section header.
-        if (line[0] == '[' && line[line.length() - 1] == ']') {
-            // Write the previous section to the temporary file.
-            if (!current_section.empty()) {
-                fprintf(temp_file, "[%s]\n", current_section.c_str());
-            }
+        size_t equals_pos = line.find('=');
+        if (equals_pos != std::string::npos) {
+            std::string key_from_file = line.substr(0, equals_pos);
+            // Trim trailing spaces
+            while (!key_from_file.empty() && key_from_file.back() == ' ')
+                key_from_file.pop_back();
 
-            // Update the current section.
-            current_section = line.substr(1, line.length() - 2);
-        } else {
-            // Check if this line contains the key to modify.
-            size_t equals_pos = line.find('=');
-            if (equals_pos != std::string::npos) {
-                // Extract the key and value from the line.
-                std::string key_from_file = line.substr(0, equals_pos);
-
-                // Check if this is the key we want to modify.
-                if (current_section == section && key_from_file == key) {
-                    // Write the modified key/value pair to the temporary file.
-                    fprintf(temp_file, "%s=%s\n", key.c_str(), new_value.c_str());
-                } else {
-                    // Write the original key/value pair to the temporary file.
-                    fprintf(temp_file, "%s\n", line.c_str());
-                }
-            } else {
-                // Write non-key lines to the temporary file.
-                fprintf(temp_file, "%s\n", line.c_str());
+            if (current_section == section_bare && key_from_file == key) {
+                temp_file << key << " = " << new_value << '\n';
+                continue;
             }
         }
+        temp_file << line << '\n';
     }
 
-    // Close the input and temporary files.
     input_file.close();
-    fclose(temp_file);
+    temp_file.close();
 
-    // Rename the temporary file to the input file name.
-    remove(file_name.c_str());
-    rename(temp_file_path, file_name.c_str());
+    std::error_code ec;
+    std::filesystem::rename(temp_path, file_path, ec);
+    if (ec) {
+        std::cerr << "Error: rename failed: " << ec.message() << std::endl;
+        std::filesystem::remove(temp_path, ec);
+    }
 }
 
 int UtilsLocal::getFontWidth(wxString text){
@@ -148,22 +143,6 @@ int UtilsLocal::getFontHeight(wxFont font_received, wxWindow* window){
 std::string UtilsLocal::convertDwgToModel(std::string project_path){
     std::string converted_path;
     return converted_path;
-}
-
-void UtilsLocal::destroyWindowButtons(wxWindow* window, int* child_window_info){
-
-    /* destroys all the buttons inside of the window */
-    wxWindowList children = window->GetChildren();
-    wxWindowList::iterator i;
-    for (i = children.begin(); i != children.end(); ++i)
-    {
-    if ((*i)->IsKindOf(CLASSINFO(wxButton)))
-    {
-        (*i)->Destroy();
-    }
-    }
-
-    *child_window_info = -1;
 }
 
 void UtilsLocal::destroyWindowButtons(wxWindow* window){

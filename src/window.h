@@ -1,9 +1,8 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
+
+#include <memory>
+
 #include <wx/event.h>
-
-#include <utils_local.h>
-
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
     #include <wx/wx.h>
@@ -13,15 +12,19 @@
 #include <render.h>
 #include <menu_buttons/menuButtons.h>
 
+class UtilsLocal;
+
 class MainApp : public wxApp
 {
 public:
-    virtual bool OnInit();
-private:
-    wxFrame* root;
-    UtilsLocal* utils_local;
-    Render* render;
-    MenuButtons* menu_buttons;
-};
+    virtual bool OnInit() override;
+    virtual int OnExit() override;
 
-#endif
+private:
+    /// wxFrame lifecycle is managed by wxWidgets (closes/destroys itself).
+    wxFrame* root = nullptr;
+
+    /// Non-wx objects are owned by this application via unique_ptr.
+    std::unique_ptr<Render>       render;
+    std::unique_ptr<MenuButtons>  menu_buttons;
+};

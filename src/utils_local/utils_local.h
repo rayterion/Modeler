@@ -1,5 +1,4 @@
-#ifndef UTILS_LOCAL
-#define UTILS_LOCAL
+#pragma once
 
 #include <wx/dcclient.h>
 #include <wx/window.h>
@@ -28,8 +27,7 @@ class UtilsLocal{
 
         std::string convertDwgToModel(std::string project_path);
 
-        void destroyWindowButtons(wxWindow* window, int* child_window_info);
+        /// Destroy all wxButton children of @p window.
+        /// Callers are responsible for resetting any associated MenuPanel state.
         void destroyWindowButtons(wxWindow* window);
 };
-
-#endif

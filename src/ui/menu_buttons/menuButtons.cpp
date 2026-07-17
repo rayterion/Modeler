@@ -3,10 +3,9 @@
 #include <utils_local.h>
 
 #include <iostream>
-#include <string.h>
 #include <fstream>
 
-MenuButtons::MenuButtons(wxWindow* root_received, Render* render_received, wxFrame* root_frame_received){
+MenuButtons::MenuButtons(wxWindow* root_received, IRenderer* render_received, wxFrame* root_frame_received){
     root = root_received;
     root->SetFont(std_font);
     root_frame = root_frame_received;
@@ -21,6 +20,16 @@ MenuButtons::MenuButtons(wxWindow* root_received, Render* render_received, wxFra
 
     createWindow();
     hideWindow();
+}
+
+MenuButtons::~MenuButtons()
+{
+    delete project_manager;
+    project_manager = nullptr;
+    delete settings_manager;
+    settings_manager = nullptr;
+    delete utils_local;
+    utils_local = nullptr;
 }
 
 void MenuButtons::loadMenuButtons(wxWindow* root_received){
@@ -78,7 +87,7 @@ void MenuButtons::showWindow(int sender_id){
     for (int i = 0; i < 4; i++){
         if (menu_button[i]->GetId() == sender_id){
             menu_button_window->SetPosition(wxPoint(menu_button[i]->GetPosition().x, menu_button[i]->GetPosition().y + menu_button[i]->GetSize().GetHeight()));
-            child_window_info = i;
+            child_window_info = static_cast<MenuPanel>(i);
             break;
             }
         }
@@ -87,7 +96,7 @@ void MenuButtons::showWindow(int sender_id){
 
 void MenuButtons::hideWindow(){
     menu_button_window->Show(false);
-    child_window_info = -1;
+    child_window_info = MenuPanel::None;
 }
 
 void MenuButtons::deleteWindowButtons(){
@@ -95,12 +104,12 @@ void MenuButtons::deleteWindowButtons(){
     wxWindowList::iterator i;
     for (i = children.begin(); i != children.end(); ++i)
     {
-    if ((*i)->IsKindOf(CLASSINFO(wxButton)))
-    {
-        (*i)->Destroy();
+        if ((*i)->IsKindOf(CLASSINFO(wxButton)))
+        {
+            (*i)->Destroy();
+        }
     }
-    }
-    child_window_info = -1;
+    child_window_info = MenuPanel::None;
 }
 
 void MenuButtons::buttonDown(const wxMouseEvent& e){
@@ -121,19 +130,21 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
     }
 
     /* shows/hides the child window */
-    if (child_window_info != -1){
-        if (menu_button[child_window_info]->GetId() == sender_id) {
-        // if the window is already open and button clicked already holds the open window
-        hideWindow();
-        deleteWindowButtons();
-        child_window_info = -1;
-        return;
-        
-        } else { 
-        // if the window is already open and the button clicked isn't the sender
-        hideWindow();
-        deleteWindowButtons();
-
+    if (child_window_info != MenuPanel::None)
+    {
+        if (menu_button[static_cast<int>(child_window_info)]->GetId() == sender_id)
+        {
+            // window already open for this button — toggle it closed
+            hideWindow();
+            deleteWindowButtons();
+            child_window_info = MenuPanel::None;
+            return;
+        }
+        else
+        {
+            // different button clicked while a panel is open — close the old one
+            hideWindow();
+            deleteWindowButtons();
         }
     }
        
@@ -141,7 +152,7 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
     /* FILE button */
     if (sender_id == menu_button[0]->GetId()){
 
-        int* child_win_info_ptr = &child_window_info;
+        MenuPanel* child_win_info_ptr = &child_window_info;
         project_manager = new ProjectManager(root, menu_button_window, child_win_info_ptr, render);
 
         std::string btn_texts[] = {"new project", "save", "open", "export", "import"};
@@ -217,11 +228,12 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
             edit_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
             edit_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
         }
-        edit_button_child[0]->Bind(wxEVT_LEFT_DOWN, &Render::undo, render, edit_button_child[0]->GetId());
-        edit_button_child[1]->Bind(wxEVT_LEFT_DOWN, &Render::redo, render, edit_button_child[1]->GetId());
-        edit_button_child[2]->Bind(wxEVT_LEFT_DOWN, &Render::cut, render, edit_button_child[2]->GetId());
-        edit_button_child[3]->Bind(wxEVT_LEFT_DOWN, &Render::copy, render, edit_button_child[3]->GetId());
-        edit_button_child[4]->Bind(wxEVT_LEFT_DOWN, &Render::paste, render, edit_button_child[4]->GetId());
+        // Use lambdas so the IRenderer interface stays free of wxMouseEvent
+        edit_button_child[0]->Bind(wxEVT_LEFT_DOWN, [this](const wxMouseEvent&) { render->undo(); });
+        edit_button_child[1]->Bind(wxEVT_LEFT_DOWN, [this](const wxMouseEvent&) { render->redo(); });
+        edit_button_child[2]->Bind(wxEVT_LEFT_DOWN, [this](const wxMouseEvent&) { render->cut(); });
+        edit_button_child[3]->Bind(wxEVT_LEFT_DOWN, [this](const wxMouseEvent&) { render->copy(); });
+        edit_button_child[4]->Bind(wxEVT_LEFT_DOWN, [this](const wxMouseEvent&) { render->paste(); });
 
         int buttons_horiz_sizes = 0;
         for (int i = 0; i < 5; i++){
@@ -236,7 +248,7 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
     /* WINDOW button */
     else if (sender_id == menu_button[2]->GetId()){
 
-        int* child_win_info_ptr = &child_window_info;
+        MenuPanel* child_win_info_ptr = &child_window_info;
         settings_manager = new SettingsManager(root, menu_button_window, child_win_info_ptr);
 
         std::string btn_texts[] = {"minimize", "maximize", "project settings", "editor settings"};

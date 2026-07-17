@@ -1,7 +1,7 @@
 #include "settingsManager.h"
 #include <iostream>
 
-SettingsManager::SettingsManager(wxWindow* root_received, wxWindow* menu_button_window_received, int* child_window_info_ptr_received){
+SettingsManager::SettingsManager(wxWindow* root_received, wxWindow* menu_button_window_received, MenuPanel* child_window_info_ptr_received){
     root = root_received;
     menu_button_window = menu_button_window_received;
     child_window_info_ptr = child_window_info_ptr_received;

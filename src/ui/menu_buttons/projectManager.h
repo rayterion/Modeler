@@ -1,7 +1,7 @@
-#ifndef PROJECT_MANAGER_H
-#define PROJECT_MANAGER_H
+#pragma once
 
-#include "render.h"
+#include <modeler/core/IRenderer.h>
+#include <modeler/ui/MenuPanel.h>
 
 #include <utils_local.h>
 
@@ -14,59 +14,50 @@
 #include <wx/list.h>
 #include <wx/font.h>
 
-class ProjectManager {
-    public:
-        ProjectManager(
-            wxWindow* root_received, 
-            wxWindow* menu_button_window_received, 
-            int* child_window_info_ptr, 
-            Render* render_received
-        );
-        
-        void showDialogWindow(const wxMouseEvent& e);
-        void hideDialogWindow();
-        
-        void loadFileDialog(int id);
-        wxFileDialog* file_dlg;
-        //create new project
-        void createNewProject(const wxCommandEvent& e);
-        void loadTextInputDialog();
-        //save project
-        void saveProject(const wxCommandEvent& e); //won't load anything
-        //open project
-        void openProject(const wxCommandEvent& e);
-        //export project
-        void exportProject(const wxCommandEvent& e);
-        //import project
-        void importProject(const wxCommandEvent& e);
-        
-        private:
+class ProjectManager
+{
+public:
+    ProjectManager(
+        wxWindow*   root_received,
+        wxWindow*   menu_button_window_received,
+        MenuPanel*  child_window_info_ptr,
+        IRenderer*  render_received
+    );
 
-        Render* render;
-        UtilsLocal* utils_local;
+    void showDialogWindow(const wxMouseEvent& e);
+    void hideDialogWindow();
 
-        std::string file_name;
+    void loadFileDialog(int id);
 
-        const wxFont& std_font = wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+    // create new project
+    void createNewProject(const wxCommandEvent& e);
+    void loadTextInputDialog();
+    // save project
+    void saveProject(const wxCommandEvent& e);
+    // open project
+    void openProject(const wxCommandEvent& e);
+    // export project
+    void exportProject(const wxCommandEvent& e);
+    // import project
+    void importProject(const wxCommandEvent& e);
 
+private:
+    IRenderer*  render          = nullptr;
+    UtilsLocal* utils_local     = nullptr;
 
-        wxWindow* root;
+    std::string file_name;
 
-        wxWindow* menu_button_window;
-        int* child_window_info;
+    // Value member — NOT a reference to a temporary (avoids dangling-ref UB)
+    wxFont std_font{ 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false };
 
-        /* create new project */
-        wxWindow* file_name_dialog;
-        wxTextCtrl* text_field;
+    wxWindow*    root                = nullptr;
+    wxWindow*    menu_button_window  = nullptr;
+    MenuPanel*   child_window_info   = nullptr;
+    wxFileDialog* file_dlg           = nullptr;
 
-        void cancel_btn_down(const wxMouseEvent& e);
+    // create new project dialog
+    wxWindow*  file_name_dialog = nullptr;
+    wxTextCtrl* text_field      = nullptr;
 
-        /* save project */
-        /* open project */
-        /* export proect */
-        /* import project */
-        /* delete project */
-
+    void cancel_btn_down(const wxMouseEvent& e);
 };
-
-#endif

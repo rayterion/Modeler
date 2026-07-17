@@ -1,22 +1,31 @@
 #include "window.h"
 
-wxIMPLEMENT_APP(MainApp); //calls MainApp::OnInit and handles errors
+#include <utils_local.h>
 
-bool MainApp::OnInit() //where the software starts
+wxIMPLEMENT_APP(MainApp);
+
+bool MainApp::OnInit()
 {
-
-    /* creates root window */
     root = new wxFrame(nullptr, wxID_ANY, "Modeler V0.1", wxPoint(0, 0), wxSize(1080, 720));
 
-    utils_local = new UtilsLocal(root, wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
+    // UtilsLocal is only needed during initialisation; not stored as a member.
+    UtilsLocal utils_local_init(root, wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
-    int windowColour = std::stoi(utils_local->findIniValue("preferences.ini", "[DEFAULT]", "window_colour"));
-    root->SetBackgroundColour(wxColour(windowColour, windowColour, windowColour));
+    const int window_colour = std::stoi(utils_local_init.findIniValue("preferences.ini", "DEFAULT", "window_colour"));
+    root->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
     root->Maximize();
 
-    render = new Render();
-    menu_buttons = new MenuButtons(root, render, root); //loads menu buttons 
+    render       = std::make_unique<Render>();
+    menu_buttons = std::make_unique<MenuButtons>(root, render.get(), root);
 
     root->Show(true);
     return true;
+}
+
+int MainApp::OnExit()
+{
+    // Destroy non-wx objects before wxWidgets tears down the window hierarchy.
+    menu_buttons.reset();
+    render.reset();
+    return wxApp::OnExit();
 }

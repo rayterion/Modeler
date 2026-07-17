@@ -1,4 +1,6 @@
-#include <string.h>
+#pragma once
+
+#include <modeler/ui/MenuPanel.h>
 
 #include <utils_local.h>
 
@@ -12,41 +14,44 @@
 #include <wx/list.h>
 #include <wx/font.h>
 
-class SettingsManager {
+class SettingsManager
+{
+public:
+    SettingsManager(wxWindow* root, wxWindow* menu_button_window, MenuPanel* child_window_info_ptr);
 
-    public:
-        SettingsManager(wxWindow* root, wxWindow* menu_button_window, int* child_window_info_ptr);
-        wxWindow* root;
-        wxWindow* menu_button_window;
-        int* child_window_info_ptr;
+    void loadSettingsDialog(const wxMouseEvent& e);
+    void hideDialogWindow();
+    void deleteDialogWindow();
 
-        wxWindow* settings_dialog;
-        wxWindow* settings_menu;
-        void loadSettingsDialog(const wxMouseEvent& e);
+private:
+    wxWindow*  root                  = nullptr;
+    wxWindow*  menu_button_window    = nullptr;
+    MenuPanel* child_window_info_ptr = nullptr;
 
-        void hideDialogWindow();
-        void deleteDialogWindow();
+    wxWindow* settings_dialog = nullptr;
+    wxWindow* settings_menu   = nullptr;
+    wxWindow* choice_dialog   = nullptr;
 
-    private:
-        void menuItemClicked(const wxMouseEvent& e);
-        void loadEnableDisableSettings(const wxMouseEvent& e);
-        void loadColourSettings(const wxMouseEvent& e);
-        void loadSizeSettings(const wxMouseEvent& e);
-        wxWindow* choice_dialog;
+    void menuItemClicked(const wxMouseEvent& e);
+    void loadEnableDisableSettings(const wxMouseEvent& e);
+    void loadColourSettings(const wxMouseEvent& e);
+    void loadSizeSettings(const wxMouseEvent& e);
 
-        wxFont std_font = wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
-        UtilsLocal* utils_local;
-        std::string setting_sender;
+    // Value member — NOT a reference to a temporary (avoids dangling-ref UB)
+    wxFont std_font{ 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false };
 
-        wxStaticText* title_project[3];
-        wxButton* button_project[3];
+    UtilsLocal* utils_local = nullptr;
+    std::string setting_sender;
 
-        wxStaticText* title_editor[5];
-        wxButton* button_editor[5];
+    wxStaticText* title_project[3] = {};
+    wxButton*     button_project[3] = {};
 
-        const int x_padding = 20;
-        const int y_padding = 10;
-        const int x_title_padding = 12;
-        const int x_padding_choice_button = 70;
-        const int y_padding_choice_button = 6;
+    wxStaticText* title_editor[5] = {};
+    wxButton*     button_editor[5] = {};
+
+    static constexpr int x_padding              = 20;
+    static constexpr int y_padding              = 10;
+    static constexpr int x_title_padding        = 12;
+    static constexpr int x_padding_choice_button = 70;
+    static constexpr int y_padding_choice_button = 6;
 };

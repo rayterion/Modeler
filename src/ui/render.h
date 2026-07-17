@@ -1,25 +1,22 @@
-#ifndef RENDER_H
-#define RENDER_H
+#pragma once
+#include <modeler/core/IRenderer.h>
 
-#include <iostream>
-#include <string.h>
-#include <wx/event.h>
+/// @brief Concrete scene renderer implementing the IRenderer interface.
+class Render : public IRenderer
+{
+public:
+    Render();
 
-class Render {
-    public:
-        Render();
-        void initRender();
-        void drawProjectScene(std::string file_name);
-        void sendProjectTo(std::string folder_path);
-        
-        void undo(const wxMouseEvent& e);
-        void redo(const wxMouseEvent& e);
-        void cut(const wxMouseEvent& e);
-        void copy(const wxMouseEvent& e);
-        void paste(const wxMouseEvent& e);
-    private:
-        static void drawDefaultGrid();
+    void initRender() override;
+    void drawProjectScene(const std::string& file_name) override;
+    void sendProjectTo(const std::string& folder_path) override;
 
+    void undo() override;
+    void redo() override;
+    void cut() override;
+    void copy() override;
+    void paste() override;
+
+private:
+    static void drawDefaultGrid();
 };
-
-#endif
