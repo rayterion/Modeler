@@ -20,8 +20,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ── Dependencies ───────────────────────────────────────────────────────────────
-find_package(wxWidgets REQUIRED COMPONENTS core base)
-include(${wxWidgets_USE_FILE})
+set(MODELER_WX_USING_CONFIG_PACKAGE FALSE)
+
+# Prefer config-package discovery (works well with vcpkg), then fall back to
+# CMake's FindwxWidgets module for system installations.
+find_package(wxWidgets CONFIG QUIET COMPONENTS core base)
+if(wxWidgets_FOUND)
+    set(MODELER_WX_USING_CONFIG_PACKAGE TRUE)
+else()
+    find_package(wxWidgets REQUIRED COMPONENTS core base)
+    include(${wxWidgets_USE_FILE})
+endif()
 
 # ── Sources ────────────────────────────────────────────────────────────────────
 set(MODELER_SOURCES
@@ -46,7 +55,11 @@ target_include_directories(Modeler PRIVATE
     src/utils_local             # utils_local.h (legacy)
 )
 
-target_link_libraries(Modeler PRIVATE ${wxWidgets_LIBRARIES})
+if(MODELER_WX_USING_CONFIG_PACKAGE)
+    target_link_libraries(Modeler PRIVATE wx::core wx::base)
+else()
+    target_link_libraries(Modeler PRIVATE ${wxWidgets_LIBRARIES})
+endif()
 
 # ── Compiler warnings ──────────────────────────────────────────────────────────
 include(cmake/CompilerWarnings.cmake)

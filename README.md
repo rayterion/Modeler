@@ -32,6 +32,12 @@ sudo apt-get update
 sudo apt-get install -y build-essential ninja-build
 ```
 
+If you are using system dependencies (no vcpkg), install wxWidgets too:
+
+```bash
+sudo apt-get install -y libwxgtk3.2-dev
+```
+
 ### Quick start
 
 ```bash
@@ -55,6 +61,11 @@ git clone https://github.com/rayterion/Modeler.git && cd Modeler
 ./scripts/modeler.sh docs                 # generate docs/html/index.html
 ./scripts/modeler.sh clean                # remove generated build dirs
 ```
+
+By default, the helper script auto-selects dependency mode:
+- Uses `vcpkg` presets when `VCPKG_ROOT` points to a valid vcpkg install.
+- Falls back to system mode otherwise.
+- Override with `--vcpkg` or `--system`.
 
 Release builds:
 

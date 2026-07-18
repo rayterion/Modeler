@@ -8,7 +8,7 @@ print_help() {
 Modeler developer helper
 
 Usage:
-  ./scripts/modeler.sh <command> [--release] [--vcpkg]
+  ./scripts/modeler.sh <command> [--release] [--vcpkg|--system]
 
 Commands:
   setup    Configure CMake
@@ -21,7 +21,8 @@ Commands:
 
 Options:
   --release   Use release preset (default: debug)
-  --vcpkg     Use vcpkg-based presets (requires VCPKG_ROOT)
+  --vcpkg     Force vcpkg-based presets (requires VCPKG_ROOT)
+  --system    Force system dependency mode (requires wxWidgets installed)
 
 Examples:
   ./scripts/modeler.sh setup
@@ -63,6 +64,28 @@ ensure_build_tools() {
   fi
 }
 
+ensure_system_wxwidgets() {
+  if command -v wx-config >/dev/null 2>&1; then
+    return
+  fi
+
+  echo "wxWidgets was not found in system mode (missing wx-config)." >&2
+  echo "Install system wxWidgets first (Ubuntu example):" >&2
+  echo "  sudo apt-get update && sudo apt-get install -y libwxgtk3.2-dev" >&2
+  echo "Or use vcpkg mode:" >&2
+  echo "  export VCPKG_ROOT=\$HOME/vcpkg" >&2
+  echo "  ./scripts/modeler.sh build --vcpkg" >&2
+  exit 1
+}
+
+auto_select_vcpkg_mode() {
+  if [[ -n "${VCPKG_ROOT:-}" && -f "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" ]]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 build_preset_name() {
   local mode="$1"
   local use_vcpkg="$2"
@@ -85,7 +108,7 @@ COMMAND="${1:-help}"
 shift || true
 
 MODE="debug"
-USE_VCPKG="false"
+USE_VCPKG="auto"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -94,6 +117,9 @@ while [[ $# -gt 0 ]]; do
       ;;
     --vcpkg)
       USE_VCPKG="true"
+      ;;
+    --system)
+      USE_VCPKG="false"
       ;;
     -h|--help|help)
       print_help
@@ -110,8 +136,16 @@ done
 
 PRESET="$(build_preset_name "$MODE" "$USE_VCPKG")"
 
+if [[ "$USE_VCPKG" == "auto" ]]; then
+  USE_VCPKG="$(auto_select_vcpkg_mode)"
+fi
+
+PRESET="$(build_preset_name "$MODE" "$USE_VCPKG")"
+
 if [[ "$USE_VCPKG" == "true" ]]; then
   ensure_vcpkg_env
+else
+  ensure_system_wxwidgets
 fi
 
 case "$COMMAND" in
