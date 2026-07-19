@@ -68,9 +68,9 @@ void MenuButtons::loadMenuButtons(wxWindow* root_received){
         menu_button[i]->SetForegroundColour(wxColour(255, 255, 255));
         menu_button[i]->SetFont(std_font);
 
-        menu_button[i]->Bind(wxEVT_LEFT_DOWN, &buttonDown, this, menu_button[i]->GetId());
-        menu_button[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEntered, this, menu_button[i]->GetId());
-        menu_button[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeave, this, menu_button[i]->GetId());
+        menu_button[i]->Bind(wxEVT_LEFT_DOWN, &MenuButtons::buttonDown, this, menu_button[i]->GetId());
+        menu_button[i]->Bind(wxEVT_ENTER_WINDOW, &MenuButtons::mouseEntered, this, menu_button[i]->GetId());
+        menu_button[i]->Bind(wxEVT_LEAVE_WINDOW, &MenuButtons::mouseLeave, this, menu_button[i]->GetId());
 
     }
 }
@@ -183,8 +183,8 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
             file_button_child[i]->SetForegroundColour(wxColour(255, 255, 255));
             file_button_child[i]->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
             file_button_child[i]->Bind(wxEVT_LEFT_DOWN, &ProjectManager::showDialogWindow, project_manager, file_button_child[i]->GetId());
-            file_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
-            file_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
+            file_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &MenuButtons::mouseEnteredChildWindow, this);
+            file_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &MenuButtons::mouseLeaveChildWindow, this);
         }
 
         int buttons_horiz_sizes = 0;
@@ -225,8 +225,8 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
             
             edit_button_child[i]->SetForegroundColour(wxColour(255, 255, 255));
             edit_button_child[i]->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
-            edit_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
-            edit_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
+            edit_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &MenuButtons::mouseEnteredChildWindow, this);
+            edit_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &MenuButtons::mouseLeaveChildWindow, this);
         }
         // Use lambdas so the IRenderer interface stays free of wxMouseEvent
         edit_button_child[0]->Bind(wxEVT_LEFT_DOWN, [this](const wxMouseEvent&) { render->undo(); });
@@ -278,8 +278,8 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
 
             window_button_child[i]->SetForegroundColour(wxColour(255, 255, 255));
             window_button_child[i]->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
-            window_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
-            window_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
+            window_button_child[i]->Bind(wxEVT_ENTER_WINDOW, &MenuButtons::mouseEnteredChildWindow, this);
+            window_button_child[i]->Bind(wxEVT_LEAVE_WINDOW, &MenuButtons::mouseLeaveChildWindow, this);
         }
         window_button_child[0]->Bind(wxEVT_LEFT_DOWN, &MenuButtons::minimizeRoot, this);
         window_button_child[1]->Bind(wxEVT_LEFT_DOWN, &MenuButtons::maximizeRoot, this);
@@ -315,8 +315,8 @@ void MenuButtons::buttonDown(const wxMouseEvent& e){
         help_button_child->SetForegroundColour(wxColour(255, 255, 255));
         help_button_child->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
         help_button_child->Bind(wxEVT_LEFT_DOWN, &MenuButtons::redirectToManual, this, help_button_child->GetId());
-        help_button_child->Bind(wxEVT_ENTER_WINDOW, &mouseEnteredChildWindow, this);
-        help_button_child->Bind(wxEVT_LEAVE_WINDOW, &mouseLeaveChildWindow, this);
+        help_button_child->Bind(wxEVT_ENTER_WINDOW, &MenuButtons::mouseEnteredChildWindow, this);
+        help_button_child->Bind(wxEVT_LEAVE_WINDOW, &MenuButtons::mouseLeaveChildWindow, this);
 
         int buttons_horiz_sizes = help_button_child->GetSize().GetHeight();
 

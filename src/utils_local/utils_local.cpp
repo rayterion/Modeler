@@ -2,6 +2,21 @@
 
 #include <filesystem>
 
+namespace {
+std::filesystem::path resolveIniPath(const std::string& file_name)
+{
+    const std::filesystem::path direct = std::filesystem::current_path() / file_name;
+    if (std::filesystem::exists(direct))
+        return direct;
+
+    const std::filesystem::path in_bin = std::filesystem::current_path() / "bin" / file_name;
+    if (std::filesystem::exists(in_bin))
+        return in_bin;
+
+    return direct;
+}
+}
+
 UtilsLocal::UtilsLocal(wxWindow* root_received, wxFont font_received) {
     root = root_received;
     font = font_received;
@@ -10,12 +25,13 @@ UtilsLocal::UtilsLocal(wxWindow* root_received, wxFont font_received) {
 UtilsLocal::UtilsLocal(){}
 
 std::string UtilsLocal::findIniValue(const std::string &file_name, const std::string &section, const std::string &key){
-  std::ifstream file(file_name);
+    const auto file_path = resolveIniPath(file_name);
+    std::ifstream file(file_path);
     std::string line;
     std::string value;
 
     if(!file) {
-        std::cerr << "Error: Unable to open file: " << file_name << std::endl;
+                std::cerr << "Error: Unable to open file: " << file_path << std::endl;
         return "";
     }
 
@@ -33,7 +49,7 @@ std::string UtilsLocal::findIniValue(const std::string &file_name, const std::st
 }
 
 void UtilsLocal::writeIniValue(const std::string &file_name, const std::string &section, const std::string &key, const std::string& new_value){
-    std::string file_path = std::filesystem::current_path().string() + "/" + file_name;
+    const std::filesystem::path file_path = resolveIniPath(file_name);
 
     // Open the input file.
     std::ifstream input_file(file_path);
@@ -45,7 +61,7 @@ void UtilsLocal::writeIniValue(const std::string &file_name, const std::string &
 
     // Write all lines to a sibling temp file, modifying the target key in-place.
     const auto temp_path = std::filesystem::path(file_path).parent_path()
-                           / (std::filesystem::path(file_path).stem().string() + "_tmp.ini");
+                           / (file_path.stem().string() + "_tmp.ini");
 
     std::ofstream temp_file(temp_path);
     if (!temp_file.is_open()) {

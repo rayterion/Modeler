@@ -139,7 +139,7 @@ void SettingsManager::loadSettingsDialog(const wxMouseEvent& e){
             button_project[i]->SetBackgroundColour(wxColour(menu_window_colour + 20 , menu_window_colour + 20, menu_window_colour + 20));
             button_project[i]->SetFont(std_font);
             button_project[i]->SetForegroundColour(wxColour(255, 255, 255));
-            button_project[i]->Bind(wxEVT_LEFT_DOWN, &loadEnableDisableSettings, this, button_project[i]->GetId());
+            button_project[i]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::loadEnableDisableSettings, this, button_project[i]->GetId());
         }
         settings_dialog->SetSize(wxSize(utils_local->getFontWidth(title_texts[0], std_font, settings_dialog) + 2*x_padding, button_project[2]->GetPosition().y + button_project[2]->GetSize().GetHeight() + 40));
 
@@ -209,11 +209,11 @@ void SettingsManager::loadSettingsDialog(const wxMouseEvent& e){
             button_editor[i]->SetFont(std_font);
             button_editor[i]->SetForegroundColour(wxColour(255, 255, 255));
         }
-        button_editor[0]->Bind(wxEVT_LEFT_DOWN, &loadColourSettings, this, button_editor[0]->GetId());
-        button_editor[1]->Bind(wxEVT_LEFT_DOWN, &loadSizeSettings, this, button_editor[1]->GetId());
-        button_editor[2]->Bind(wxEVT_LEFT_DOWN, &loadEnableDisableSettings, this, button_editor[2]->GetId());
-        button_editor[3]->Bind(wxEVT_LEFT_DOWN, &loadEnableDisableSettings, this, button_editor[3]->GetId());
-        button_editor[4]->Bind(wxEVT_LEFT_DOWN, &loadEnableDisableSettings, this, button_editor[4]->GetId());
+        button_editor[0]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::loadColourSettings, this, button_editor[0]->GetId());
+        button_editor[1]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::loadSizeSettings, this, button_editor[1]->GetId());
+        button_editor[2]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::loadEnableDisableSettings, this, button_editor[2]->GetId());
+        button_editor[3]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::loadEnableDisableSettings, this, button_editor[3]->GetId());
+        button_editor[4]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::loadEnableDisableSettings, this, button_editor[4]->GetId());
 
         settings_dialog->SetSize(wxSize(utils_local->getFontWidth(title_texts[3], std_font, settings_dialog) + 2*x_padding, button_editor[4]->GetPosition().y + button_editor[4]->GetSize().GetHeight() + 40));
 
@@ -260,12 +260,12 @@ void SettingsManager::loadEnableDisableSettings(const wxMouseEvent& e){
         enable_button->SetBackgroundColour(wxColour(menu_window_colour + 20, menu_window_colour + 20, menu_window_colour + 20));
         enable_button->SetFont(std_font);
         enable_button->SetForegroundColour(wxColour(255, 255, 255));
-        enable_button->Bind(wxEVT_LEFT_DOWN, &menuItemClicked, this, enable_button->GetId());
+        enable_button->Bind(wxEVT_LEFT_DOWN, &SettingsManager::menuItemClicked, this, enable_button->GetId());
 
         disable_button->SetBackgroundColour(wxColour(menu_window_colour + 20, menu_window_colour + 20, menu_window_colour + 20));
         disable_button->SetFont(std_font);
         disable_button->SetForegroundColour(wxColour(255, 255, 255));
-        disable_button->Bind(wxEVT_LEFT_DOWN, &menuItemClicked, this, disable_button->GetId());
+        disable_button->Bind(wxEVT_LEFT_DOWN, &SettingsManager::menuItemClicked, this, disable_button->GetId());
 
         choice_dialog->SetBackgroundColour(wxColour(menu_window_colour, menu_window_colour, menu_window_colour));
         choice_dialog->SetSize(wxSize(disable_button->GetSize().GetWidth() + 6, disable_button->GetPosition().y + disable_button->GetSize().GetHeight() + 3));
@@ -337,7 +337,7 @@ void SettingsManager::loadColourSettings(const wxMouseEvent& e){
         colour_button[i]->SetBackgroundColour(wxColour(menu_window_colour + 20, menu_window_colour + 20, menu_window_colour + 20));
         colour_button[i]->SetFont(std_font);
         colour_button[i]->SetForegroundColour(wxColour(255, 255, 255));
-        colour_button[i]->Bind(wxEVT_LEFT_DOWN, &menuItemClicked, this, colour_button[i]->GetId());
+        colour_button[i]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::menuItemClicked, this, colour_button[i]->GetId());
         }
 
         choice_dialog->SetBackgroundColour(wxColour(menu_window_colour, menu_window_colour, menu_window_colour));
@@ -409,7 +409,7 @@ void SettingsManager::loadSizeSettings(const wxMouseEvent& e){
         size_button[i]->SetBackgroundColour(wxColour(menu_window_colour + 20, menu_window_colour + 20, menu_window_colour + 20));
         size_button[i]->SetFont(std_font);
         size_button[i]->SetForegroundColour(wxColour(255, 255, 255));
-        size_button[i]->Bind(wxEVT_LEFT_DOWN, &menuItemClicked, this, size_button[i]->GetId());
+        size_button[i]->Bind(wxEVT_LEFT_DOWN, &SettingsManager::menuItemClicked, this, size_button[i]->GetId());
         }
 
         choice_dialog->SetBackgroundColour(wxColour(menu_window_colour, menu_window_colour, menu_window_colour));
