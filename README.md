@@ -1,6 +1,6 @@
 # Modeler
 
-> A cross-platform 3D CAD modeller for architects and 3D artists, with a planned AI-assisted scene builder.
+> A Windows-focused 3D CAD modeller for architects and 3D artists, with a planned AI-assisted scene builder.
 
 [![CI](https://github.com/rayterion/Modeler/actions/workflows/ci.yml/badge.svg)](https://github.com/rayterion/Modeler/actions/workflows/ci.yml)
 [![Docs](https://github.com/rayterion/Modeler/actions/workflows/docs.yml/badge.svg)](https://rayterion.github.io/Modeler)
@@ -13,93 +13,9 @@
 - DWG / DXF import pipeline (planned)
 - AI-assisted scene builder (planned)
 
-## Building
+## Documentation
 
-### Prerequisites
-
-| Tool | Minimum version |
-|------|----------------|
-| CMake | 3.25 |
-| Ninja | latest |
-| A C++17 compiler | GCC 11 / Clang 14 / MSVC 2022 |
-| wxWidgets | 3.2 |
-| vcpkg *(optional)* | latest |
-
-Ubuntu quick install for build tools:
-
-```bash
-sudo apt-get update
-sudo apt-get install -y build-essential ninja-build
-```
-
-If you are using system dependencies (no vcpkg), install wxWidgets too:
-
-```bash
-sudo apt-get install -y libwxgtk3.2-dev
-```
-
-### Quick start
-
-```bash
-# 1. Clone and enter the repo
-git clone https://github.com/rayterion/Modeler.git && cd Modeler
-
-# 2. Configure + build (Debug, system dependencies)
-./scripts/modeler.sh build
-
-# 3. Run
-./scripts/modeler.sh run
-```
-
-### Common developer commands
-
-```bash
-./scripts/modeler.sh setup                # configure debug build
-./scripts/modeler.sh build                # configure + build debug
-./scripts/modeler.sh test                 # configure + build + run tests
-./scripts/modeler.sh run                  # build + run app
-./scripts/modeler.sh docs                 # generate docs/html/index.html
-./scripts/modeler.sh clean                # remove generated build dirs
-```
-
-By default, the helper script auto-selects dependency mode:
-- Uses `vcpkg` presets when `VCPKG_ROOT` points to a valid vcpkg install.
-- Falls back to system mode otherwise.
-- Override with `--vcpkg` or `--system`.
-
-Release builds:
-
-```bash
-./scripts/modeler.sh build --release
-./scripts/modeler.sh test --release
-```
-
-Using vcpkg dependency resolution:
-
-```bash
-export VCPKG_ROOT=$HOME/vcpkg
-./scripts/modeler.sh build --vcpkg
-./scripts/modeler.sh test --vcpkg
-```
-
-### CMake presets (without helper script)
-
-```bash
-cmake --preset dev
-cmake --build --preset dev
-ctest --preset dev
-```
-
-Available configure presets: `dev`, `release`, `dev-vcpkg`, `release-vcpkg`.
-
-### Setup error troubleshooting
-
-- `Could not find toolchain file: /scripts/buildsystems/vcpkg.cmake`
-  - `VCPKG_ROOT` was not set before running CMake.
-  - Fix: `export VCPKG_ROOT=/absolute/path/to/vcpkg` and use `--vcpkg` commands.
-- `CMAKE_MAKE_PROGRAM is not set` / `CMAKE_CXX_COMPILER not set`
-  - Required build tools are missing.
-  - Fix (Ubuntu): `sudo apt-get install -y build-essential ninja-build`
+Environment setup, prerequisite checks, installation steps, and build/test/run commands are documented in `SETUP.md`.
 
 ## Project structure
 

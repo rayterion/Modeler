@@ -5,8 +5,7 @@
   "dependencies": [
     {
       "name": "wxwidgets",
-      "default-features": false,
-      "features": ["core"]
+      "default-features": false
     }
   ]
 }

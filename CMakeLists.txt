@@ -1,14 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
 
-# If VCPKG_ROOT is available and no explicit toolchain is provided,
-# automatically use vcpkg to resolve dependencies.
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{VCPKG_ROOT})
-    set(CMAKE_TOOLCHAIN_FILE
-        "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "Path to the vcpkg toolchain file"
-    )
-endif()
-
 project(Modeler VERSION 0.1.0 LANGUAGES CXX)
 
 # ── Language standard ──────────────────────────────────────────────────────────

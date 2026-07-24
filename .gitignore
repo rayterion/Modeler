@@ -46,3 +46,6 @@ Thumbs.db
 # Compiled Python (if any tooling uses it)
 __pycache__/
 *.pyc
+
+
+vcpkg/

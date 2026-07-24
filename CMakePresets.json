@@ -36,13 +36,13 @@
       "name": "dev-vcpkg",
       "inherits": "dev",
       "displayName": "Development (Debug, vcpkg deps)",
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
       "name": "release-vcpkg",
       "inherits": "release",
       "displayName": "Release (vcpkg deps)",
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     }
   ],
   "buildPresets": [
