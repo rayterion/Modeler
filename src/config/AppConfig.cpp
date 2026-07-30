@@ -19,10 +19,7 @@ static std::string trim(const std::string& s)
 
 // ── AppConfig ─────────────────────────────────────────────────────────────────
 
-AppConfig::AppConfig(std::filesystem::path file_path)
-    : file_path_(std::move(file_path))
-{
-}
+AppConfig::AppConfig(std::filesystem::path file_path) : file_path_(std::move(file_path)) {}
 
 const std::filesystem::path& AppConfig::path() const noexcept
 {
@@ -102,7 +99,7 @@ void AppConfig::setValue(const std::string& section, const std::string& key, con
                 const std::string file_key = trim(line.substr(0, eq));
                 if (file_key == key)
                 {
-                    line     = key + " = " + new_value;
+                    line = key + " = " + new_value;
                     key_written = true;
                 }
             }

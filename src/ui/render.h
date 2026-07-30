@@ -4,7 +4,7 @@
 /// @brief Concrete scene renderer implementing the IRenderer interface.
 class Render : public IRenderer
 {
-public:
+  public:
     Render();
 
     void initRender() override;
@@ -17,6 +17,6 @@ public:
     void copy() override;
     void paste() override;
 
-private:
+  private:
     static void drawDefaultGrid();
 };

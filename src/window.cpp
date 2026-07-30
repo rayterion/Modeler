@@ -15,7 +15,7 @@ bool MainApp::OnInit()
     root->SetBackgroundColour(wxColour(window_colour, window_colour, window_colour));
     root->Maximize();
 
-    render       = std::make_unique<Render>();
+    render = std::make_unique<Render>();
     menu_buttons = std::make_unique<MenuButtons>(root, render.get(), root);
 
     root->Show(true);

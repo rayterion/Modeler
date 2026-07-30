@@ -6,7 +6,7 @@
 /// state needed to execute and reverse a single user action.
 class ICommand
 {
-public:
+  public:
     virtual ~ICommand() = default;
 
     /// @brief Apply the operation to the scene.

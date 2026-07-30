@@ -7,7 +7,7 @@
 /// and tests can depend on this interface without requiring a live GUI.
 class IRenderer
 {
-public:
+  public:
     virtual ~IRenderer() = default;
 
     /// @brief Initialise the underlying rendering context.
