@@ -68,7 +68,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install cppcheck
-        run: choco install cppcheck -y --no-progress
+        run: |
+          choco install cppcheck -y --no-progress
+          # The choco cppcheck binary has FILESDIR baked in to a build-machine path (R:/winlibs64ucrt_stage/...).
+          # Work around this by mapping R: to C:\ and creating the expected directory junction so cppcheck
+          # can locate its cfg files at runtime.
+          subst R: C:\
+          New-Item -ItemType Directory -Force -Path "C:\winlibs64ucrt_stage\inst_cppcheck-2.14.0\share" | Out-Null
+          New-Item -ItemType Junction -Path "C:\winlibs64ucrt_stage\inst_cppcheck-2.14.0\share\Cppcheck" `
+            -Target "C:\Program Files\Cppcheck" | Out-Null
 
       - name: Run cppcheck
         run: |

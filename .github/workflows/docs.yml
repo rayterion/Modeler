@@ -34,6 +34,7 @@ jobs:
   deploy-docs:
     needs: build-docs
     runs-on: windows-latest
+    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
