@@ -15,13 +15,12 @@ concurrency:
 
 jobs:
   build-docs:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Doxygen and Graphviz
-        run: |
-          choco install doxygen.install graphviz -y --no-progress
+        run: sudo apt-get install -y doxygen graphviz
 
       - name: Generate documentation
         run: doxygen docs/Doxyfile
@@ -33,7 +32,7 @@ jobs:
 
   deploy-docs:
     needs: build-docs
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     continue-on-error: true
     environment:
       name: github-pages

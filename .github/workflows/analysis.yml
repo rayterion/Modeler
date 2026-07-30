@@ -7,34 +7,39 @@ on:
     branches: [main]
 
 jobs:
+  # ── clang-format ──────────────────────────────────────────────────────────
+  # Runs on ubuntu-latest: clang-format-18 is available via apt and the runner
+  # boots ~3x faster than a Windows runner.
   clang-format:
     name: clang-format check
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install LLVM tools
-        uses: KyleMayes/install-llvm-action@v2
-        with:
-          version: "18"
+      - name: Install clang-format-18
+        run: sudo apt-get install -y clang-format-18
 
       - name: Check formatting
         run: |
-          $files = @(Get-ChildItem include, src -Recurse -Include *.h,*.cpp | ForEach-Object { $_.FullName })
-          if ($files.Count -gt 0) {
-            clang-format --dry-run --Werror --style=file $files
-          }
+          files=$(find include src -name '*.h' -o -name '*.cpp')
+          if [ -n "$files" ]; then
+            echo "$files" | xargs clang-format-18 --dry-run --Werror --style=file
+          fi
 
+  # ── clang-tidy ────────────────────────────────────────────────────────────
+  # Stays on windows-latest to analyse against the real MSVC/VS toolchain.
+  # LLVM 20 is required: VS2026's STL headers assert "expected Clang 20 or newer"
+  # when processed by an older clang front-end.
   clang-tidy:
     name: clang-tidy
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install LLVM tools
+      - name: Install LLVM 20
         uses: KyleMayes/install-llvm-action@v2
         with:
-          version: "18"
+          version: "20"
 
       - name: Set up vcpkg
         uses: lukka/run-vcpkg@v11
@@ -58,33 +63,28 @@ jobs:
         run: |
           $files = @(Get-ChildItem src -Recurse -Filter *.cpp | ForEach-Object { $_.FullName })
           foreach ($file in $files) {
-            clang-tidy $file --p build --header-filter='.*(include|src).*\\.(h|hpp)$'
+            clang-tidy $file -p build --header-filter='.*(include|src).*\\.(h|hpp)$'
           }
 
+  # ── cppcheck ──────────────────────────────────────────────────────────────
+  # Runs on ubuntu-latest: the apt-packaged cppcheck is self-contained and
+  # avoids the broken FILESDIR path that the choco Windows package has.
   cppcheck:
     name: cppcheck
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install cppcheck
-        run: |
-          choco install cppcheck -y --no-progress
-          # The choco cppcheck binary has FILESDIR baked in to a build-machine path (R:/winlibs64ucrt_stage/...).
-          # Work around this by mapping R: to C:\ and creating the expected directory junction so cppcheck
-          # can locate its cfg files at runtime.
-          subst R: C:\
-          New-Item -ItemType Directory -Force -Path "C:\winlibs64ucrt_stage\inst_cppcheck-2.14.0\share" | Out-Null
-          New-Item -ItemType Junction -Path "C:\winlibs64ucrt_stage\inst_cppcheck-2.14.0\share\Cppcheck" `
-            -Target "C:\Program Files\Cppcheck" | Out-Null
+        run: sudo apt-get install -y cppcheck
 
       - name: Run cppcheck
         run: |
-          cppcheck `
-            --enable=all `
-            --std=c++17 `
-            --suppress=missingIncludeSystem `
-            --error-exitcode=1 `
-            --inline-suppr `
-            -I include `
+          cppcheck \
+            --enable=all \
+            --std=c++17 \
+            --suppress=missingIncludeSystem \
+            --error-exitcode=1 \
+            --inline-suppr \
+            -I include \
             src
