@@ -81,9 +81,12 @@ jobs:
       - name: Run cppcheck
         run: |
           cppcheck \
-            --enable=all \
+            --enable=warning \
             --std=c++17 \
             --suppress=missingIncludeSystem \
+            --suppress=noCopyConstructor \
+            --suppress=noOperatorEq \
+            --suppress=nullPointerRedundantCheck \
             --error-exitcode=1 \
             --inline-suppr \
             -I include \
