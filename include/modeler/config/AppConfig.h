@@ -18,7 +18,7 @@
 /// are separated by ` = ` (space-equals-space).
 class AppConfig
 {
-public:
+  public:
     /// @brief Construct an AppConfig bound to the given file path.
     /// @param file_path Absolute or relative path to the .ini file.
     explicit AppConfig(std::filesystem::path file_path);
@@ -42,6 +42,6 @@ public:
     /// @brief Return the file path this instance is bound to.
     [[nodiscard]] const std::filesystem::path& path() const noexcept;
 
-private:
+  private:
     std::filesystem::path file_path_;
 };

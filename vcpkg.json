@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "modeler",
   "version": "0.1.0",
+  "builtin-baseline": "8586ecbf125a36cb372920bc58ea7e23ad83776c",
   "dependencies": [
     {
       "name": "wxwidgets",

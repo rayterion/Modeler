@@ -1,5 +1,6 @@
 #pragma once
 #include <modeler/core/ICommand.h>
+
 #include <memory>
 #include <vector>
 
@@ -9,7 +10,7 @@
 /// linear history model).
 class CommandStack
 {
-public:
+  public:
     /// @brief Execute a command and push it onto the undo stack.
     ///
     /// Any commands currently on the redo stack are discarded.
@@ -35,7 +36,7 @@ public:
     /// @brief Discard all undo and redo history.
     void clear() noexcept;
 
-private:
+  private:
     std::vector<std::unique_ptr<ICommand>> undo_stack_;
     std::vector<std::unique_ptr<ICommand>> redo_stack_;
 };
